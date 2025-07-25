@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profiles version="21">
+  <profile kind="CodeFormatterProfile" name="Leopard Java" version="21">
+    <!-- Indentation settings -->
+    <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="tab"/>
+    <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4"/>
+    <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="4"/>
+
+    <!-- Braces -->
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_method_declaration" value="end_of_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_type_declaration" value="end_of_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_constructor_declaration" value="end_of_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_block" value="end_of_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_anonymous_type_declaration" value="end_of_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_array_initializer" value="end_of_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_enum_constant" value="end_of_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_enum_declaration" value="end_of_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_lambda_body" value="end_of_line"/>
+
+     <!-- Proper empty block formatting -->
+    <setting id="org.eclipse.jdt.core.formatter.compact_else_if" value="true"/>
+    <setting id="org.eclipse.jdt.core.formatter.keep_empty_method_body_on_one_line" value="true"/>
+    <setting id="org.eclipse.jdt.core.formatter.keep_simple_methods_on_one_line" value="true"/>
+    <setting id="org.eclipse.jdt.core.formatter.keep_simple_blocks_on_one_line" value="true"/>
+    <setting id="org.eclipse.jdt.core.formatter.keep_empty_blocks_on_one_line" value="true"/>
+
+    <!-- NO space between control keywords and parens -->
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_if" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_for" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_while" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_switch" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_catch" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_synchronized" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_try" value="false"/>
+
+    <!-- Chained calls -->
+    <setting id="org.eclipse.jdt.core.formatter.alignment_for_selector_in_method_invocation_chain" value="16"/> <!-- WRAP_INDENT -->
+    <setting id="org.eclipse.jdt.core.formatter.join_wrapped_lines" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="120"/>
+
+    <!-- Tabs only -->
+    <setting id="org.eclipse.jdt.core.formatter.use_tabs_only_for_leading_indentations" value="false"/>
+  </profile>
+</profiles>
