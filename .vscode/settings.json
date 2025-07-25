@@ -61,6 +61,6 @@
   ],
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "redhat.java",
-  "java.format.settings.url": "https://github.com/RobotLeopard86/Swerv3/blob/main/leopardformatter.xml",
+  "java.format.settings.url": "https://raw.githubusercontent.com/RobotLeopard86/Swerv3/refs/heads/main/leopardformatter.xml",
   "java.format.settings.profile": "Leopard Java"
 }
