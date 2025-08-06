@@ -3,95 +3,83 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.drive.Drive;
 
 public class Constants {
-    public enum RobotType {
-        SIM
-    }
+	// Xbox controller port
+	public static final int XBOX_PORT = 0;
 
-    public static RobotType robot = RobotType.SIM;
+	// Type of robot we're running on
+	public enum RobotType {
+		SIM
+	}
 
-    // Drive configuration
-    // frameDiagonal is the diagonal length between the corners of the metal frame
-    // bumperDiagnol is the same but between the corners of the bumpers
-    public record DriveConfig(
-            Translation2d frameDiagonal, Translation2d bumperDiagonal,
-            double maxLinearVelocity, double maxLinearAcceleration) {
+	public static RobotType ROBOT_TYPE = RobotType.SIM;
 
-        public double getBaseRadius() {
-            return frameDiagonal.getNorm() / 2;
-        }
-    }
+	// Drive configuration
+	// frameDiagonal is the diagonal length between the corners of the metal frame
+	// bumperDiagnol is the same but between the corners of the bumpers
+	public record DriveConfig(
+			Translation2d frameDiagonal, Translation2d bumperDiagonal,
+			double maxLinearVelocity, double maxLinearAcceleration) {
 
-    public static final DriveConfig DRIVE_CFG = switch(robot) {
-    // These values were copied from DriveConstants.java in
-    // redshiftrobotics/reefscape-2025
-    case SIM -> new DriveConfig(new Translation2d(0.885, 0.885), new Translation2d(0.9612, 0.9612), 0.06, 14.5);
-    };
+		public double getBaseRadius() {
+			return frameDiagonal.getNorm() / 2;
+		}
+	}
 
-    // Module positions
-    public static final double CENTER_X = DRIVE_CFG.frameDiagonal.getX() / 2;
-    public static final double CENTER_Y = DRIVE_CFG.frameDiagonal.getY() / 2;
-    public static final Translation2d MODULE_FL_DISTANCE_FROM_CENTER = new Translation2d(-CENTER_X, CENTER_Y);
-    public static final Translation2d MODULE_FR_DISTANCE_FROM_CENTER = new Translation2d(CENTER_X, CENTER_Y);
-    public static final Translation2d MODULE_BL_DISTANCE_FROM_CENTER = new Translation2d(-CENTER_X, -CENTER_Y);
-    public static final Translation2d MODULE_BR_DISTANCE_FROM_CENTER = new Translation2d(CENTER_X, -CENTER_Y);
+	public static final DriveConfig DRIVE_CFG = switch(ROBOT_TYPE) {
+	// These values were copied from DriveConstants.java in
+	// redshiftrobotics/reefscape-2025
+	case SIM -> new DriveConfig(new Translation2d(0.885, 0.885), new Translation2d(0.9612, 0.9612), 0.06, 14.5);
+	};
 
-    // Wheel radius
-    public static final double WHEEL_RADIUS = Units.inchesToMeters(2);
+	// Module positions
+	public static final double CENTER_X = DRIVE_CFG.frameDiagonal.getX() / 2;
+	public static final double CENTER_Y = DRIVE_CFG.frameDiagonal.getY() / 2;
+	public static final Translation2d MODULE_FL_DISTANCE_FROM_CENTER = new Translation2d(-CENTER_X, CENTER_Y);
+	public static final Translation2d MODULE_FR_DISTANCE_FROM_CENTER = new Translation2d(CENTER_X, CENTER_Y);
+	public static final Translation2d MODULE_BL_DISTANCE_FROM_CENTER = new Translation2d(-CENTER_X, -CENTER_Y);
+	public static final Translation2d MODULE_BR_DISTANCE_FROM_CENTER = new Translation2d(CENTER_X, -CENTER_Y);
 
-    // Swerve module configuration
-    public record SwerveModuleConfig(
-            int driveMotorID, int turnMotorID, int absEncoder, Rotation2d absEncoderOffset, boolean turnMotorInverted) {
-    }
+	// Wheel radius
+	public static final double WHEEL_RADIUS = Units.inchesToMeters(2);
 
-    public static final SwerveModuleConfig MODULE_CFG = switch(robot) {
-    case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
-    };
+	// Swerve module configuration
+	public record SwerveModuleConfig(
+			int driveMotorID, int turnMotorID, int absEncoder, Rotation2d absEncoderOffset, boolean turnMotorInverted) {
+	}
 
-    // Controller gains
-    public record FeedforwardGains(double kS, double kV, double kA) {
-    }
+	public static final SwerveModuleConfig MODULE_CFG = switch(ROBOT_TYPE) {
+	case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
+	};
 
-    public record PIDGains(double kP, double kI, double kD) {
-    }
+	// Controller gains
+	public record FeedforwardGains(double kS, double kV, double kA) {
+	}
 
-    // Gain settings
-    public static final FeedforwardGains driveFeedFwd = new FeedforwardGains(0, 0, 0);
-    public static final PIDGains driveFeedback = new PIDGains(0, 0, 0);
-    public static final PIDGains turnFeedback = new PIDGains(0, 0, 0);
+	public record PIDGains(double kP, double kI, double kD) {
+	}
 
-    // Reductions were copied from ModuleConstants.java in
-    // redshiftrobotics/reefscape-2025!
+	// Gain settings
+	public static final FeedforwardGains DRIVE_FEEDFWD_GAINS = new FeedforwardGains(0, 0, 0);
+	public static final PIDGains DRIVE_PID_GAINS = new PIDGains(0, 0, 0);
+	public static final PIDGains TURN_PID_GAINS = new PIDGains(0, 0, 0);
 
-    // https://www.swervedrivespecialties.com/products/mk4i-swerve-module
-    private enum Mk4iReductions {
-        // Note: Mk4i turn motors are inverted!
-        L1((50.0 / 14.0) * (19.0 / 25.0) * (45.0 / 15.0)),
-        L2((50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0)),
-        L3((50.0 / 14.0) * (16.0 / 28.0) * (45.0 / 15.0)),
-        TURN((150.0 / 7.0));
+	// Reductions were copied from ModuleConstants.java in
+	// redshiftrobotics/reefscape-2025!
+	// Originally sourced from:
+	// https://www.swervedrivespecialties.com/products/mk4i-swerve-module
+	private enum Mk4iReductions {
+		// Note: Mk4i turn motors are inverted!
+		L1((50.0 / 14.0) * (19.0 / 25.0) * (45.0 / 15.0)),
+		L2((50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0)),
+		L3((50.0 / 14.0) * (16.0 / 28.0) * (45.0 / 15.0)),
+		TURN((150.0 / 7.0));
 
-        final double reduction;
+		final double reduction;
 
-        Mk4iReductions(double reduction) {
-            this.reduction = reduction;
-        }
-    }
-
-    // https://www.swervedrivespecialties.com/products/mk4-swerve-module
-    private enum Mk4Reductions {
-        L1((50.0 / 14.0) * (19.0 / 25.0) * (45.0 / 15.0)),
-        L2((50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0)),
-        L3((50.0 / 14.0) * (16.0 / 28.0) * (45.0 / 15.0)),
-        L4((48.0 / 16.0) * (16.0 / 28.0) * (45.0 / 15.0)),
-        TURN((12.8 / 1.0));
-
-        final double reduction;
-
-        Mk4Reductions(double reduction) {
-            this.reduction = reduction;
-        }
-    }
+		Mk4iReductions(double reduction) {
+			this.reduction = reduction;
+		}
+	}
 }

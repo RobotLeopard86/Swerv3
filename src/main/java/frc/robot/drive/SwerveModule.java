@@ -1,57 +1,80 @@
 package frc.robot.drive;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants;
 
 public class SwerveModule {
-    // Distance from center of robot
-    private Translation2d distanceFromCenter;
+	// Distance from center of robot
+	private Translation2d distanceFromCenter;
 
-    // IO layer + inputs
-    private ModuleIO io;
-    private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
+	// IO layer + inputs
+	private ModuleIO io;
+	private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
 
-    // Target state
-    private SwerveModuleState targetState;
+	// Target state
+	private SwerveModuleState targetState;
 
-    public SwerveModule(ModuleIO io, Translation2d distanceFromCenter) {
-        this.distanceFromCenter = distanceFromCenter;
-        this.io = io;
-    }
+	// Feedforward model
+	private SimpleMotorFeedforward feedFwd;
 
-    // Update data going into the IO layer
-    public void updateInputs() {
-        // TODO
-    }
+	public SwerveModule(ModuleIO io, Translation2d distanceFromCenter) {
+		this.distanceFromCenter = distanceFromCenter;
+		this.io = io;
 
-    public Translation2d getDistanceFromCenter() {
-        return distanceFromCenter;
-    }
+		// Initialize feedforward model
+		feedFwd = new SimpleMotorFeedforward(Constants.DRIVE_FEEDFWD_GAINS.kS(), Constants.DRIVE_FEEDFWD_GAINS.kV(),
+				Constants.DRIVE_FEEDFWD_GAINS.kA(), 0.02);
 
-    public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(inputs.driveMotorPositionRad * Constants.WHEEL_RADIUS,
-                inputs.turnMotorAbsPosition);
-    }
+		// Configure PID gains
+		io.setDriveMotorPIDGains(Constants.DRIVE_PID_GAINS);
+		io.setTurnMotorPIDGains(Constants.TURN_PID_GAINS);
 
-    public void setTargetState(SwerveModuleState state) {
-        // Optimize state to avoid wild spinning
-        state.optimize(inputs.turnMotorAbsPosition);
-        state.cosineScale(inputs.turnMotorAbsPosition);
+		// Enable brake by default
+		io.setDriveMotorBrake(true);
+		io.setTurnMotorBrake(true);
+	}
 
-        // TODO: IO layer comms
+	// Update data going into the IO layer
+	public void updateInputs() {
+		io.updateInputs(inputs);
+	}
 
-        targetState = state;
-    }
+	public Translation2d getDistanceFromCenter() {
+		return distanceFromCenter;
+	}
 
-    public SwerveModuleState getTargetState() {
-        return targetState;
-    }
+	public SwerveModulePosition getPosition() {
+		return new SwerveModulePosition(inputs.driveMotorPositionRad * Constants.WHEEL_RADIUS,
+				inputs.turnMotorAbsPosition);
+	}
 
-    public SwerveModuleState getMeasuredState() {
-        return new SwerveModuleState(inputs.driveMotorVelocityRadPerSec * Constants.WHEEL_RADIUS,
-                inputs.turnMotorAbsPosition);
-    }
+	public void setTargetState(SwerveModuleState state) {
+		// Optimize state to avoid wild spinning
+		state.optimize(inputs.turnMotorAbsPosition);
+		state.cosineScale(inputs.turnMotorAbsPosition);
+
+		// Set motor values
+		io.setDriveMotorVelocity(state.speedMetersPerSecond / Constants.WHEEL_RADIUS,
+				feedFwd.calculate(state.speedMetersPerSecond));
+		io.setTurnMotorPosition(state.angle.getRadians());
+
+		targetState = state;
+	}
+
+	public SwerveModuleState getTargetState() {
+		return targetState;
+	}
+
+	public SwerveModuleState getMeasuredState() {
+		return new SwerveModuleState(inputs.driveMotorVelocityRadPerSec * Constants.WHEEL_RADIUS,
+				inputs.turnMotorAbsPosition);
+	}
+
+	public void stop() {
+		io.stop();
+	}
 
 }
