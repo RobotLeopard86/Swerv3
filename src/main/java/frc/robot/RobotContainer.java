@@ -32,7 +32,7 @@ public class RobotContainer {
 
 	private void configureBindings() {
 		// Set up joystick helper
-		joyHlpr = new JoystickInputHelper(() -> -xbox.getLeftY(), () -> -xbox.getLeftX(), () -> -xbox.getRightY());
+		joyHlpr = new JoystickInputHelper(() -> -xbox.getLeftY(), () -> -xbox.getLeftX(), () -> -xbox.getRightX());
 
 		// Configure drive command
 		drive.setDefaultCommand(

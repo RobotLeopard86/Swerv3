@@ -1,8 +1,6 @@
 package frc.robot.drive;
 
 import java.util.Arrays;
-import java.util.stream.Stream;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -10,6 +8,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -35,21 +34,25 @@ public class Drive extends SubsystemBase {
 	private GyroIO gyro;
 	private GyroIOInputsAutoLogged gyroInputs;
 
+	// Data for yaw calculation without gyro
+	private SwerveModulePosition[] lastModulePositions;
+	private Rotation2d yaw = Rotation2d.kZero;
+
 	public Drive(ModuleIO fl, ModuleIO fr, ModuleIO bl, ModuleIO br, GyroIO gyro) {
 		// Set modules
 		modules = new SwerveModule[] {
-				new SwerveModule(fl, Constants.MODULE_FL_DISTANCE_FROM_CENTER),
-				new SwerveModule(fr, Constants.MODULE_FR_DISTANCE_FROM_CENTER),
-				new SwerveModule(bl, Constants.MODULE_BL_DISTANCE_FROM_CENTER),
-				new SwerveModule(br, Constants.MODULE_BR_DISTANCE_FROM_CENTER),
+				new SwerveModule(fl, Constants.MODULE_FL_DISTANCE_FROM_CENTER, "FL"),
+				new SwerveModule(fr, Constants.MODULE_FR_DISTANCE_FROM_CENTER, "FR"),
+				new SwerveModule(bl, Constants.MODULE_BL_DISTANCE_FROM_CENTER, "BL"),
+				new SwerveModule(br, Constants.MODULE_BR_DISTANCE_FROM_CENTER, "BR"),
 		};
 
 		// Configure kinematics and odometry
 		kinematics = new SwerveDriveKinematics(
 				Arrays.stream(modules).map(SwerveModule::getDistanceFromCenter).toArray(Translation2d[]::new));
-		poseEstimator = new SwerveDrivePoseEstimator(kinematics, Rotation2d.kZero,
-				Arrays.stream(modules).map(SwerveModule::getPosition).toArray(SwerveModulePosition[]::new),
-				new Pose2d());
+		lastModulePositions = Arrays.stream(modules).map(SwerveModule::getPosition)
+				.toArray(SwerveModulePosition[]::new);
+		poseEstimator = new SwerveDrivePoseEstimator(kinematics, Rotation2d.kZero, lastModulePositions, new Pose2d());
 
 		// Set gyro
 		this.gyro = gyro;
@@ -106,6 +109,11 @@ public class Drive extends SubsystemBase {
 		setTargetRobotSpeeds(new ChassisSpeeds());
 	}
 
+	@AutoLogOutput(key = "Yaw")
+	Rotation2d getYaw() {
+		return yaw;
+	}
+
 	@Override
 	public void periodic() {
 		// Update inputs
@@ -123,8 +131,37 @@ public class Drive extends SubsystemBase {
 		Logger.recordOutput("Drive/RobotSpeeds/Target", getTargetRobotSpeeds());
 		Logger.recordOutput("Drive/RobotSpeeds/Measured", getMeasuredRobotSpeeds());
 
+		// Get angle
+		if(gyroInputs.connected) {
+			yaw = gyroInputs.yaw;
+		} else {
+			// Calculate module deltas to guesstimate turn
+			// This code is slightly modified from code in Drive.java,
+			// redshift-robotics/reefscape2025
+			SwerveModulePosition[] modulePositions = new SwerveModulePosition[modules.length];
+			SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[modules.length];
+			for(int i = 0; i < modules.length; i++) {
+				// Set current position
+				modulePositions[i] = modules[i].getPosition();
+
+				// Calculate delta
+				moduleDeltas[i] = new SwerveModulePosition(
+						modulePositions[i].distanceMeters - lastModulePositions[i].distanceMeters,
+						modulePositions[i].angle);
+
+				// Copy last position
+				lastModulePositions[i] = modulePositions[i];
+			}
+
+			// Convert deltas to twist
+			Twist2d twist = kinematics.toTwist2d(moduleDeltas);
+
+			// Update yaw
+			yaw = yaw.plus(new Rotation2d(twist.dtheta));
+		}
+
 		// Update the pose estimator with gyro angle and module positions
-		pose = poseEstimator.update(gyroInputs.yaw,
+		pose = poseEstimator.update(yaw,
 				Arrays.stream(modules).map(SwerveModule::getPosition).toArray(SwerveModulePosition[]::new));
 	}
 

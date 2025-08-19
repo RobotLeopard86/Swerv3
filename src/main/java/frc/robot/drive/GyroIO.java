@@ -9,6 +9,7 @@ public interface GyroIO {
 	public static class GyroIOInputs {
 		public Rotation2d yaw = Rotation2d.kZero;
 		public double yawVelocityRadPerSec = 0.0f;
+		public boolean connected = false;
 	}
 
 	// Update loggable inputs from the underlying hardware

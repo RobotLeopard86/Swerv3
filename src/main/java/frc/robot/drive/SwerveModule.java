@@ -1,5 +1,7 @@
 package frc.robot.drive;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -20,7 +22,10 @@ public class SwerveModule {
 	// Feedforward model
 	private SimpleMotorFeedforward feedFwd;
 
-	public SwerveModule(ModuleIO io, Translation2d distanceFromCenter) {
+	private String name;
+
+	public SwerveModule(ModuleIO io, Translation2d distanceFromCenter, String name) {
+		this.name = name;
 		this.distanceFromCenter = distanceFromCenter;
 		this.io = io;
 
@@ -39,6 +44,7 @@ public class SwerveModule {
 
 	// Update data going into the IO layer
 	public void updateInputs() {
+		Logger.processInputs("Drive/Module" + name, inputs);
 		io.updateInputs(inputs);
 	}
 
