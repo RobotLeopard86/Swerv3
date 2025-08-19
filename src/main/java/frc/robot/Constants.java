@@ -3,17 +3,33 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 
 public class Constants {
 	// Xbox controller port
 	public static final int XBOX_PORT = 0;
+
+	// Joystick control deadbamd
+	public static final double JOYSTICK_DEADBAND = 0.15;
 
 	// Type of robot we're running on
 	public enum RobotType {
 		SIM
 	}
 
-	public static RobotType ROBOT_TYPE = RobotType.SIM;
+	public static final RobotType ROBOT_TYPE = RobotType.SIM;
+
+	// Runtime environment
+	public enum Environment {
+		REALITY,
+		SIM,
+		REPLAY
+	}
+
+	public static final Environment ENV = switch(ROBOT_TYPE) {
+	case SIM -> Environment.SIM;
+	default -> RobotBase.isReal() ? Environment.REALITY : Environment.REPLAY;
+	};
 
 	// Command scheduler loop period
 	public static final double LOOP_PERIOD = 0.02;
@@ -28,12 +44,20 @@ public class Constants {
 		public double getBaseRadius() {
 			return frameDiagonal.getNorm() / 2;
 		}
+
+		public double maxAngularVelocity() {
+			return maxLinearVelocity / getBaseRadius();
+		}
+
+		public double maxAngularAcceleration() {
+			return maxLinearAcceleration / getBaseRadius();
+		}
 	}
 
 	public static final DriveConfig DRIVE_CFG = switch(ROBOT_TYPE) {
 	// These values were copied from DriveConstants.java in
 	// redshiftrobotics/reefscape-2025
-	case SIM -> new DriveConfig(new Translation2d(0.885, 0.885), new Translation2d(0.9612, 0.9612), 0.06, 14.5);
+	case SIM -> new DriveConfig(new Translation2d(0.885, 0.885), new Translation2d(0.9612, 0.9612), 5.05968, 14.5);
 	};
 
 	// Module positions

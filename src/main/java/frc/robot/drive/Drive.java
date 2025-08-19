@@ -45,11 +45,11 @@ public class Drive extends SubsystemBase {
 		};
 
 		// Configure kinematics and odometry
-		Stream<SwerveModule> modStream = Arrays.stream(modules);
 		kinematics = new SwerveDriveKinematics(
-				modStream.map(SwerveModule::getDistanceFromCenter).toArray(Translation2d[]::new));
+				Arrays.stream(modules).map(SwerveModule::getDistanceFromCenter).toArray(Translation2d[]::new));
 		poseEstimator = new SwerveDrivePoseEstimator(kinematics, Rotation2d.kZero,
-				modStream.map(SwerveModule::getPosition).toArray(SwerveModulePosition[]::new), new Pose2d());
+				Arrays.stream(modules).map(SwerveModule::getPosition).toArray(SwerveModulePosition[]::new),
+				new Pose2d());
 
 		// Set gyro
 		this.gyro = gyro;

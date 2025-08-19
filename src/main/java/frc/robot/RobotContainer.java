@@ -8,12 +8,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.drive.Drive;
+import frc.robot.drive.DriveCommands;
 import frc.robot.drive.GyroIO;
 import frc.robot.drive.SimModuleIO;
 
 public class RobotContainer {
 	// Controller
 	private CommandXboxController xbox = new CommandXboxController(Constants.XBOX_PORT);
+	private JoystickInputHelper joyHlpr;
 
 	// Drive subsystem
 	private Drive drive;
@@ -29,6 +31,12 @@ public class RobotContainer {
 	}
 
 	private void configureBindings() {
+		// Set up joystick helper
+		joyHlpr = new JoystickInputHelper(() -> -xbox.getLeftY(), () -> -xbox.getLeftX(), () -> -xbox.getRightY());
+
+		// Configure drive command
+		drive.setDefaultCommand(
+				DriveCommands.teleopDrive(drive, () -> joyHlpr.getTranslation(), () -> joyHlpr.getOmega()));
 	}
 
 	public Command getAutonomousCommand() {
