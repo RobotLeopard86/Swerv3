@@ -9,17 +9,17 @@ public interface ModuleIO {
 	@AutoLog
 	public static class ModuleIOInputs {
 		// Drive motor data
-		double driveMotorPositionRad;
-		double driveMotorVelocityRadPerSec;
-		double driveMotorAppliedVolts;
-		double driveMotorCurrentAmpsSupply;
+		public double driveMotorPositionRad;
+		public double driveMotorVelocityRadPerSec;
+		public double driveMotorAppliedVolts;
+		public double driveMotorCurrentAmpsSupply;
 
 		// Turn motor data
-		Rotation2d turnMotorPosition = Rotation2d.kZero;
-		Rotation2d turnMotorAbsPosition = Rotation2d.kZero;
-		double turnMotorVelocityRadPerSec;
-		double turnMotorAppliedVolts;
-		double turnMotorCurrentAmpsSupply;
+		public Rotation2d turnMotorPosition = Rotation2d.kZero;
+		public Rotation2d turnMotorAbsPosition = Rotation2d.kZero;
+		public double turnMotorVelocityRadPerSec;
+		public double turnMotorAppliedVolts;
+		public double turnMotorCurrentAmpsSupply;
 	}
 
 	// Update loggable inputs from the underlying hardware

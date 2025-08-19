@@ -26,7 +26,7 @@ public class SwerveModule {
 
 		// Initialize feedforward model
 		feedFwd = new SimpleMotorFeedforward(Constants.DRIVE_FEEDFWD_GAINS.kS(), Constants.DRIVE_FEEDFWD_GAINS.kV(),
-				Constants.DRIVE_FEEDFWD_GAINS.kA(), 0.02);
+				Constants.DRIVE_FEEDFWD_GAINS.kA(), Constants.LOOP_PERIOD);
 
 		// Configure PID gains
 		io.setDriveMotorPIDGains(Constants.DRIVE_PID_GAINS);

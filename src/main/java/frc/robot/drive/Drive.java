@@ -3,6 +3,9 @@ package frc.robot.drive;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -11,23 +14,28 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Drive extends SubsystemBase {
 	// Swerve modules
-	SwerveModule[] modules; // FL, FR, BL, BR order
+	private SwerveModule[] modules; // FL, FR, BL, BR order
 
 	// Kinematics & odometry
-	SwerveDriveKinematics kinematics;
-	SwerveDrivePoseEstimator poseEstimator;
+	private SwerveDriveKinematics kinematics;
+	private SwerveDrivePoseEstimator poseEstimator;
 
 	// Current robot pose and speeds
-	Pose2d pose = new Pose2d();
-	ChassisSpeeds speeds = new ChassisSpeeds();
-	ChassisSpeeds targetSpeeds = new ChassisSpeeds();
+	private Pose2d pose = new Pose2d();
+	private ChassisSpeeds speeds = new ChassisSpeeds();
+	private ChassisSpeeds targetSpeeds = new ChassisSpeeds();
 
-	Drive(ModuleIO fl, ModuleIO fr, ModuleIO bl, ModuleIO br) {
+	// Gyro
+	private GyroIO gyro;
+	private GyroIOInputsAutoLogged gyroInputs;
+
+	public Drive(ModuleIO fl, ModuleIO fr, ModuleIO bl, ModuleIO br, GyroIO gyro) {
 		// Set modules
 		modules = new SwerveModule[] {
 				new SwerveModule(fl, Constants.MODULE_FL_DISTANCE_FROM_CENTER),
@@ -43,11 +51,14 @@ public class Drive extends SubsystemBase {
 		poseEstimator = new SwerveDrivePoseEstimator(kinematics, Rotation2d.kZero,
 				modStream.map(SwerveModule::getPosition).toArray(SwerveModulePosition[]::new), new Pose2d());
 
+		// Set gyro
+		this.gyro = gyro;
+		gyroInputs = new GyroIOInputsAutoLogged();
 	}
 
 	void setTargetRobotSpeeds(ChassisSpeeds speeds) {
 		// Make the speeds discrete to account for them only changing every loop period
-		targetSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
+		targetSpeeds = ChassisSpeeds.discretize(speeds, Constants.LOOP_PERIOD);
 		this.speeds = targetSpeeds;
 
 		// Calculate appropriate wheel speeds
@@ -80,13 +91,14 @@ public class Drive extends SubsystemBase {
 		return Arrays.stream(modules).map(SwerveModule::getMeasuredState).toArray(SwerveModuleState[]::new);
 	}
 
+	@AutoLogOutput(key = "Pose")
 	Pose2d getPose() {
 		return pose;
 	}
 
 	void setPose(Pose2d pose) {
 		// Reset the pose estimator
-		poseEstimator.resetPosition(Rotation2d.kZero,
+		poseEstimator.resetPosition(gyroInputs.yaw,
 				Arrays.stream(modules).map(SwerveModule::getPosition).toArray(SwerveModulePosition[]::new), pose);
 	}
 
@@ -96,9 +108,23 @@ public class Drive extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		// Update the pose estimator with gyro angle (not yet implemented) and module
-		// positions
-		pose = poseEstimator.update(Rotation2d.kZero,
+		// Update inputs
+		gyro.updateInputs(gyroInputs);
+		Arrays.stream(modules).forEach(SwerveModule::updateInputs);
+		Logger.processInputs("Drive/Gyro", gyroInputs);
+
+		// Halt movement if disabled
+		if(DriverStation.isDisabled())
+			stop();
+
+		// Log data to AdvantageKit
+		Logger.recordOutput("Drive/WheelSpeeds/Target", getTargetWheelSpeeds());
+		Logger.recordOutput("Drive/WheelSpeeds/Measured", getMeasuredWheelSpeeds());
+		Logger.recordOutput("Drive/RobotSpeeds/Target", getTargetRobotSpeeds());
+		Logger.recordOutput("Drive/RobotSpeeds/Measured", getMeasuredRobotSpeeds());
+
+		// Update the pose estimator with gyro angle and module positions
+		pose = poseEstimator.update(gyroInputs.yaw,
 				Arrays.stream(modules).map(SwerveModule::getPosition).toArray(SwerveModulePosition[]::new));
 	}
 

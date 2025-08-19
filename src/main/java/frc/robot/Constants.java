@@ -15,6 +15,9 @@ public class Constants {
 
 	public static RobotType ROBOT_TYPE = RobotType.SIM;
 
+	// Command scheduler loop period
+	public static final double LOOP_PERIOD = 0.02;
+
 	// Drive configuration
 	// frameDiagonal is the diagonal length between the corners of the metal frame
 	// bumperDiagnol is the same but between the corners of the bumpers
@@ -60,10 +63,11 @@ public class Constants {
 	public record PIDGains(double kP, double kI, double kD) {
 	}
 
-	// Gain settings
+	// Current gain settings copied from ModuleConstants.java,
+	// redshiftrobotics/reefscape-2025
 	public static final FeedforwardGains DRIVE_FEEDFWD_GAINS = new FeedforwardGains(0, 0, 0);
-	public static final PIDGains DRIVE_PID_GAINS = new PIDGains(0, 0, 0);
-	public static final PIDGains TURN_PID_GAINS = new PIDGains(0, 0, 0);
+	public static final PIDGains DRIVE_PID_GAINS = new PIDGains(1.3, 0, 0);
+	public static final PIDGains TURN_PID_GAINS = new PIDGains(10.0, 0, 0);
 
 	// Reductions were copied from ModuleConstants.java in
 	// redshiftrobotics/reefscape-2025!
@@ -82,4 +86,12 @@ public class Constants {
 			this.reduction = reduction;
 		}
 	}
+
+	// Reductions
+	public static final double DRIVE_REDUCTION = switch(ROBOT_TYPE) {
+	case SIM -> Mk4iReductions.L3.reduction;
+	};
+	public static final double TURN_REDUCTION = switch(ROBOT_TYPE) {
+	case SIM -> Mk4iReductions.TURN.reduction;
+	};
 }

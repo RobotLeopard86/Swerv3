@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.drive.Drive;
+import frc.robot.drive.GyroIO;
+import frc.robot.drive.SimModuleIO;
 
 public class RobotContainer {
 	// Controller
@@ -17,12 +19,11 @@ public class RobotContainer {
 	private Drive drive;
 
 	public RobotContainer() {
-		// Select appropriate IO
-		switch(Constants.ROBOT_TYPE) {
-		case SIM:
-			// TODO: Need to implement SIM IO first
-			break;
-		}
+		// Select appropriate IO layers for drive
+		drive = switch(Constants.ROBOT_TYPE) {
+		case SIM -> new Drive(new SimModuleIO(), new SimModuleIO(), new SimModuleIO(), new SimModuleIO(), new GyroIO() {
+		});
+		};
 
 		configureBindings();
 	}
