@@ -1,9 +1,12 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.TunerConstants;
 
 public class Constants {
 	// Xbox controller port
@@ -14,7 +17,8 @@ public class Constants {
 
 	// Type of robot we're running on
 	public enum RobotType {
-		SIM
+		SIM,
+		PRESEASON_2026
 	}
 
 	public static final RobotType ROBOT_TYPE = RobotType.SIM;
@@ -28,6 +32,7 @@ public class Constants {
 
 	public static final Environment ENV = switch(ROBOT_TYPE) {
 	case SIM -> Environment.SIM;
+	case PRESEASON_2026 -> Environment.REALITY;
 	default -> RobotBase.isReal() ? Environment.REALITY : Environment.REPLAY;
 	};
 
@@ -55,9 +60,18 @@ public class Constants {
 	}
 
 	public static final DriveConfig DRIVE_CFG = switch(ROBOT_TYPE) {
-	// These values were copied from DriveConstants.java in
+	// These values (for sim bot) were copied from DriveConstants.java in
 	// redshiftrobotics/reefscape-2025
 	case SIM -> new DriveConfig(new Translation2d(0.885, 0.885), new Translation2d(0.9612, 0.9612), 5.05968, 14.5);
+
+	case PRESEASON_2026 -> new DriveConfig(new Translation2d(
+			TunerConstants.FrontLeft.LocationX - TunerConstants.BackRight.LocationX,
+			TunerConstants.FrontLeft.LocationY - TunerConstants.BackRight.LocationY),
+			new Translation2d(
+					TunerConstants.FrontLeft.LocationX - TunerConstants.BackRight.LocationX,
+					TunerConstants.FrontLeft.LocationY - TunerConstants.BackRight.LocationY)
+							.plus(new Translation2d(6.750, 6.750).times(2)),
+			TunerConstants.kSpeedAt12Volts.in(MetersPerSecond), 22.0);
 	};
 
 	// Module positions
@@ -76,8 +90,39 @@ public class Constants {
 			int driveMotorID, int turnMotorID, int absEncoder, Rotation2d absEncoderOffset, boolean turnMotorInverted) {
 	}
 
-	public static final SwerveModuleConfig MODULE_CFG = switch(ROBOT_TYPE) {
+	public static final SwerveModuleConfig MODULE_FL_CFG = switch(ROBOT_TYPE) {
 	case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
+	case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.FrontLeft.DriveMotorId,
+			TunerConstants.FrontLeft.SteerMotorId, TunerConstants.FrontLeft.EncoderId,
+			Rotation2d.fromRotations(TunerConstants.FrontLeft.EncoderOffset),
+			TunerConstants.FrontLeft.SteerMotorInverted);
+	};
+	public static final SwerveModuleConfig MODULE_FR_CFG = switch(ROBOT_TYPE) {
+	case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
+	case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.FrontRight.DriveMotorId,
+			TunerConstants.FrontRight.SteerMotorId, TunerConstants.FrontRight.EncoderId,
+			Rotation2d.fromRotations(TunerConstants.FrontRight.EncoderOffset),
+			TunerConstants.FrontRight.SteerMotorInverted);
+	};
+	public static final SwerveModuleConfig MODULE_BL_CFG = switch(ROBOT_TYPE) {
+	case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
+	case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.BackLeft.DriveMotorId,
+			TunerConstants.BackLeft.SteerMotorId, TunerConstants.BackLeft.EncoderId,
+			Rotation2d.fromRotations(TunerConstants.BackLeft.EncoderOffset),
+			TunerConstants.BackLeft.SteerMotorInverted);
+	};
+	public static final SwerveModuleConfig MODULE_BR_CFG = switch(ROBOT_TYPE) {
+	case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
+	case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.BackRight.DriveMotorId,
+			TunerConstants.BackRight.SteerMotorId, TunerConstants.BackRight.EncoderId,
+			Rotation2d.fromRotations(TunerConstants.BackRight.EncoderOffset),
+			TunerConstants.BackRight.SteerMotorInverted);
+	};
+
+	// Gyro ID
+	public static final int GYRO_ID = switch(ROBOT_TYPE) {
+	case SIM -> -1;
+	case PRESEASON_2026 -> TunerConstants.DrivetrainConstants.Pigeon2Id;
 	};
 
 	// Controller gains
@@ -97,7 +142,7 @@ public class Constants {
 	// redshiftrobotics/reefscape-2025!
 	// Originally sourced from:
 	// https://www.swervedrivespecialties.com/products/mk4i-swerve-module
-	private enum Mk4iReductions {
+	public enum Mk4iReductions {
 		// Note: Mk4i turn motors are inverted!
 		L1((50.0 / 14.0) * (19.0 / 25.0) * (45.0 / 15.0)),
 		L2((50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0)),
@@ -111,11 +156,31 @@ public class Constants {
 		}
 	}
 
+	// Reductions were copied from ModuleConstants.java in
+	// redshiftrobotics/preseason-2026!
+	// Originally sourced from:
+	// https://www.swervedrivespecialties.com/products/mk5n-swerve-module
+	public enum Mk5nReductions {
+		L1(12.0),
+		L2(14.0),
+		L3(16.0);
+
+		public static final double TURN_REDUCTION = (287.0 / 11.0);
+
+		public final double reduction;
+
+		Mk5nReductions(double adjustableGearTeeth) {
+			this.reduction = (54.0 / adjustableGearTeeth) * (25.0 / 32.0) * (30.0 / 15.0);
+		}
+	}
+
 	// Reductions
 	public static final double DRIVE_REDUCTION = switch(ROBOT_TYPE) {
 	case SIM -> Mk4iReductions.L3.reduction;
+	case PRESEASON_2026 -> Mk5nReductions.L3.reduction;
 	};
 	public static final double TURN_REDUCTION = switch(ROBOT_TYPE) {
 	case SIM -> Mk4iReductions.TURN.reduction;
+	case PRESEASON_2026 -> Mk5nReductions.TURN_REDUCTION;
 	};
 }

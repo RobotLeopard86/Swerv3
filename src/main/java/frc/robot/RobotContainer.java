@@ -25,6 +25,9 @@ public class RobotContainer {
 		drive = switch(Constants.ROBOT_TYPE) {
 		case SIM -> new Drive(new SimModuleIO(), new SimModuleIO(), new SimModuleIO(), new SimModuleIO(), new GyroIO() {
 		});
+		case PRESEASON_2026 -> new Drive(new SimModuleIO(), new SimModuleIO(), new SimModuleIO(), new SimModuleIO(),
+				new GyroIO() {
+				});
 		};
 
 		configureBindings();
