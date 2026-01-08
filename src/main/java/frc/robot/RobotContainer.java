@@ -11,11 +11,13 @@ import frc.robot.drive.Drive;
 import frc.robot.drive.DriveCommands;
 import frc.robot.drive.GyroIO;
 import frc.robot.drive.SimModuleIO;
+import frc.robot.drive.TalonFXModuleIO;
+import frc.robot.generated.TunerConstants;
 
 public class RobotContainer {
 	// Controller
 	private CommandXboxController xbox = new CommandXboxController(Constants.XBOX_PORT);
-	private JoystickInputHelper joyHlpr;
+	private JoystickInputHelper joystickHelper;
 
 	// Drive subsystem
 	private Drive drive;
@@ -25,8 +27,9 @@ public class RobotContainer {
 		drive = switch(Constants.ROBOT_TYPE) {
 		case SIM -> new Drive(new SimModuleIO(), new SimModuleIO(), new SimModuleIO(), new SimModuleIO(), new GyroIO() {
 		});
-		case PRESEASON_2026 -> new Drive(new SimModuleIO(), new SimModuleIO(), new SimModuleIO(), new SimModuleIO(),
-				new GyroIO() {
+		case PRESEASON_2026 -> new Drive(new TalonFXModuleIO(TunerConstants.FrontLeft),
+				new TalonFXModuleIO(TunerConstants.FrontRight), new TalonFXModuleIO(TunerConstants.BackLeft),
+				new TalonFXModuleIO(TunerConstants.BackRight), new GyroIO() {
 				});
 		};
 
@@ -35,11 +38,13 @@ public class RobotContainer {
 
 	private void configureBindings() {
 		// Set up joystick helper
-		joyHlpr = new JoystickInputHelper(() -> -xbox.getLeftY(), () -> -xbox.getLeftX(), () -> -xbox.getRightX());
+		joystickHelper = new JoystickInputHelper(() -> -xbox.getLeftY(), () -> -xbox.getLeftX(),
+				() -> -xbox.getRightX());
 
 		// Configure drive command
 		drive.setDefaultCommand(
-				DriveCommands.teleopDrive(drive, () -> joyHlpr.getTranslation(), () -> joyHlpr.getOmega()));
+				DriveCommands.teleopDrive(drive, () -> joystickHelper.getTranslation(),
+						() -> joystickHelper.getOmega()));
 	}
 
 	public Command getAutonomousCommand() {

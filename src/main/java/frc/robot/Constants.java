@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.TunerConstants;
+import frc.robot.generated.TunerConstants;
 
 public class Constants {
 	// Xbox controller port
@@ -87,11 +87,13 @@ public class Constants {
 
 	// Swerve module configuration
 	public record SwerveModuleConfig(
-			int driveMotorID, int turnMotorID, int absEncoder, Rotation2d absEncoderOffset, boolean turnMotorInverted) {
+			int driveMotorID, int turnMotorID, int encoderID, Rotation2d encoderOffset, boolean turnMotorInverted) {
 	}
 
 	public static final SwerveModuleConfig MODULE_FL_CFG = switch(ROBOT_TYPE) {
 	case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
+	// DO NOT RELY ON THIS FOR PRESEASON_2026, USE THE PER-MODULE CONSTANTS VALUES
+	// FROM TunerConstants!!!
 	case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.FrontLeft.DriveMotorId,
 			TunerConstants.FrontLeft.SteerMotorId, TunerConstants.FrontLeft.EncoderId,
 			Rotation2d.fromRotations(TunerConstants.FrontLeft.EncoderOffset),
@@ -99,6 +101,8 @@ public class Constants {
 	};
 	public static final SwerveModuleConfig MODULE_FR_CFG = switch(ROBOT_TYPE) {
 	case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
+	// DO NOT RELY ON THIS FOR PRESEASON_2026, USE THE PER-MODULE CONSTANTS VALUES
+	// FROM TunerConstants!!!
 	case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.FrontRight.DriveMotorId,
 			TunerConstants.FrontRight.SteerMotorId, TunerConstants.FrontRight.EncoderId,
 			Rotation2d.fromRotations(TunerConstants.FrontRight.EncoderOffset),
@@ -106,6 +110,8 @@ public class Constants {
 	};
 	public static final SwerveModuleConfig MODULE_BL_CFG = switch(ROBOT_TYPE) {
 	case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
+	// DO NOT RELY ON THIS FOR PRESEASON_2026, USE THE PER-MODULE CONSTANTS VALUES
+	// FROM TunerConstants!!!
 	case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.BackLeft.DriveMotorId,
 			TunerConstants.BackLeft.SteerMotorId, TunerConstants.BackLeft.EncoderId,
 			Rotation2d.fromRotations(TunerConstants.BackLeft.EncoderOffset),
@@ -113,6 +119,8 @@ public class Constants {
 	};
 	public static final SwerveModuleConfig MODULE_BR_CFG = switch(ROBOT_TYPE) {
 	case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
+	// DO NOT RELY ON THIS FOR PRESEASON_2026, USE THE PER-MODULE CONSTANTS VALUES
+	// FROM TunerConstants!!!
 	case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.BackRight.DriveMotorId,
 			TunerConstants.BackRight.SteerMotorId, TunerConstants.BackRight.EncoderId,
 			Rotation2d.fromRotations(TunerConstants.BackRight.EncoderOffset),
@@ -133,10 +141,19 @@ public class Constants {
 	}
 
 	// Current gain settings copied from ModuleConstants.java,
-	// redshiftrobotics/reefscape-2025
-	public static final FeedforwardGains DRIVE_FEEDFWD_GAINS = new FeedforwardGains(0, 0, 0);
-	public static final PIDGains DRIVE_PID_GAINS = new PIDGains(1.3, 0, 0);
-	public static final PIDGains TURN_PID_GAINS = new PIDGains(10.0, 0, 0);
+	// redshiftrobotics/reefscape-2025 & redshiftrobotics/preseason-2026
+	public static final FeedforwardGains DRIVE_FEEDFWD_GAINS = switch(ROBOT_TYPE) {
+	case SIM -> new FeedforwardGains(0, 0, 0);
+	case PRESEASON_2026 -> new FeedforwardGains(2.00544, 1.05719, 0);
+	};
+	public static final PIDGains DRIVE_PID_GAINS = switch(ROBOT_TYPE) {
+	case SIM -> new PIDGains(1.3, 0, 0);
+	case PRESEASON_2026 -> new PIDGains(20, 0, 0);
+	};
+	public static final PIDGains TURN_PID_GAINS = switch(ROBOT_TYPE) {
+	case SIM -> new PIDGains(10.0, 0, 0);
+	case PRESEASON_2026 -> new PIDGains(1000, 0, 15);
+	};
 
 	// Reductions were copied from ModuleConstants.java in
 	// redshiftrobotics/reefscape-2025!
@@ -149,7 +166,7 @@ public class Constants {
 		L3((50.0 / 14.0) * (16.0 / 28.0) * (45.0 / 15.0)),
 		TURN((150.0 / 7.0));
 
-		final double reduction;
+		public final double reduction;
 
 		Mk4iReductions(double reduction) {
 			this.reduction = reduction;
