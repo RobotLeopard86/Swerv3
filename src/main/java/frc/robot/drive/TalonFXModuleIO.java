@@ -42,8 +42,7 @@ public class TalonFXModuleIO implements ModuleIO {
         private final CANcoder cancoder;
 
         // Configurations
-        private final TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration(),
-                        turnMotorConfig = new TalonFXConfiguration();
+        private final TalonFXConfiguration driveMotorConfig, turnMotorConfig;
         private final CANcoderConfiguration cancoderConfig;
 
         // Brake mode storage
@@ -82,12 +81,14 @@ public class TalonFXModuleIO implements ModuleIO {
                 turnMotor = new TalonFX(constants.SteerMotorId);
                 cancoder = new CANcoder(constants.EncoderId);
 
-                // Setup initial drive configuration
+                // Setup initial drive configurationr
+                driveMotorConfig = constants.DriveMotorInitialConfigs;
                 driveMotorConfig.MotorOutput.NeutralMode = driveBrake ? NeutralModeValue.Brake : NeutralModeValue.Coast; // Brake
                                                                                                                          // mode
                 driveMotorConfig.MotorOutput.Inverted = constants.DriveMotorInverted ? InvertedValue.Clockwise_Positive
                                 : InvertedValue.CounterClockwise_Positive; // Motor inversion
                 driveMotorConfig.Slot0 = constants.DriveMotorGains; // Initial feedforward and feedback gains
+                driveMotorConfig.Feedback.SensorToMechanismRatio = constants.DriveMotorGearRatio; // Gear ratio of motor
                 driveMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = constants.SlipCurrent; // Maximum allowed
                                                                                                  // forward
                                                                                                  // output in
@@ -103,6 +104,7 @@ public class TalonFXModuleIO implements ModuleIO {
                 driveMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;// Enable the control above
 
                 // Setup initial turn configuration
+                turnMotorConfig = constants.SteerMotorInitialConfigs;
                 turnMotorConfig.MotorOutput.NeutralMode = turnBrake ? NeutralModeValue.Brake : NeutralModeValue.Coast;// Brake
                                                                                                                       // mode
                 turnMotorConfig.MotorOutput.Inverted = constants.SteerMotorInverted ? InvertedValue.Clockwise_Positive
