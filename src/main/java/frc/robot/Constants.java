@@ -23,7 +23,7 @@ public class Constants {
 		PRESEASON_2026
 	}
 
-	public static final RobotType ROBOT_TYPE = RobotType.SIM;
+	public static final RobotType ROBOT_TYPE = RobotType.PRESEASON_2026;
 
 	// Runtime environment
 	public enum Environment {
