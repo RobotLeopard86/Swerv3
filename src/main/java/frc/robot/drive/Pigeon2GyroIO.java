@@ -14,52 +14,52 @@ import frc.robot.Constants;
 
 public class Pigeon2GyroIO implements GyroIO {
 
-    // Pigeon2 (the gyro)
-    private final Pigeon2 pigeon;
+	// Pigeon2 (the gyro)
+	private final Pigeon2 pigeon;
 
-    // Configuration
-    private final Pigeon2Configuration pigeonConfig;
+	// Configuration
+	private final Pigeon2Configuration pigeonConfig;
 
-    // Status signals
-    private final StatusSignal<Angle> yaw;
-    private final StatusSignal<AngularVelocity> yawVelocity;
+	// Status signals
+	private final StatusSignal<Angle> yaw;
+	private final StatusSignal<AngularVelocity> yawVelocity;
 
-    // Connection debouncer
-    private final Debouncer connectionDebouncer = new Debouncer(
-            Constants.DRIVE_ENCODER_DISCONNECT_WARNING_THRESHOLD_SECONDS);
+	// Connection debouncer
+	private final Debouncer connectionDebouncer = new Debouncer(
+			Constants.DRIVE_ENCODER_DISCONNECT_WARNING_THRESHOLD_SECONDS);
 
-    public Pigeon2GyroIO() {
-        // Setup Pigeon2 and config
-        pigeon = new Pigeon2(Constants.GYRO_ID);
-        pigeonConfig = new Pigeon2Configuration();
-        pigeon.getConfigurator().apply(pigeonConfig);
+	public Pigeon2GyroIO() {
+		// Setup Pigeon2 and config
+		pigeon = new Pigeon2(Constants.GYRO_ID);
+		pigeonConfig = new Pigeon2Configuration();
+		pigeon.getConfigurator().apply(pigeonConfig);
 
-        // Fetch status signals
-        yaw = pigeon.getYaw();
-        yawVelocity = pigeon.getAngularVelocityZWorld();
+		// Fetch status signals
+		yaw = pigeon.getYaw();
+		yawVelocity = pigeon.getAngularVelocityZWorld();
 
-        // Set initial yaw
-        pigeon.setYaw(0);
+		// Set initial yaw
+		pigeon.setYaw(0);
 
-        // Configure status signal polling behavior
-        yaw.setUpdateFrequency(Constants.DRIVE_ODOMETRY_FREQUENCY_HZ);
-        yawVelocity.setUpdateFrequency(50.0);
-        pigeon.optimizeBusUtilization();
-    }
+		// Configure status signal polling behavior
+		yaw.setUpdateFrequency(Constants.DRIVE_ODOMETRY_FREQUENCY_HZ);
+		yawVelocity.setUpdateFrequency(50.0);
+		pigeon.optimizeBusUtilization();
+	}
 
-    @Override
-    public void updateInputs(GyroIOInputs inputs) {
-        // Refresh status signals with current data
-        StatusCode status = BaseStatusSignal.refreshAll(yaw, yawVelocity);
+	@Override
+	public void updateInputs(GyroIOInputs inputs) {
+		// Refresh status signals with current data
+		StatusCode status = BaseStatusSignal.refreshAll(yaw, yawVelocity);
 
-        // Set values
-        inputs.connected = connectionDebouncer.calculate(status.isOK());
-        inputs.yaw = Rotation2d.fromDegrees(yaw.getValueAsDouble());
-        inputs.yawVelocityRadPerSec = Units.degreesToRadians(yaw.getValueAsDouble());
-    }
+		// Set values
+		inputs.connected = connectionDebouncer.calculate(status.isOK());
+		inputs.yaw = Rotation2d.fromDegrees(yaw.getValueAsDouble());
+		inputs.yawVelocityRadPerSec = Units.degreesToRadians(yaw.getValueAsDouble());
+	}
 
-    @Override
-    public void reset() {
-        pigeon.reset();
-    }
+	@Override
+	public void reset() {
+		pigeon.reset();
+	}
 }
