@@ -29,32 +29,32 @@ public class Robot extends LoggedRobot {
 		Logger.recordMetadata("BuildInfo/Commit", BuildConstants.GIT_SHA);
 		Logger.recordMetadata("BuildInfo/CommitDate", BuildConstants.GIT_DATE);
 		Logger.recordMetadata("GitState", switch(BuildConstants.DIRTY) {
-		case 0 -> "All changes committed";
-		case 1 -> "Uncommitted changes";
-		default -> "Unknown";
+			case 0 -> "All changes committed - working tree clean";
+			case 1 -> "Uncommitted changes";
+			default -> "Unknown";
 		});
 
 		// Configure & start AdvantageKit
 		// Logic copied from Robot.java, redshiftrobotics/reefscape-2025
 		switch(Constants.ENV) {
-		case REALITY:
+			case REALITY:
 			// Running on a real robot, log to a USB stick ("/U/logs")
 			Logger.addDataReceiver(new WPILOGWriter());
 			Logger.addDataReceiver(new NT4Publisher());
-			break;
+				break;
 
-		case SIM:
+			case SIM:
 			// Running a physics simulator, log to NT
 			Logger.addDataReceiver(new NT4Publisher());
-			break;
+				break;
 
-		case REPLAY:
+			case REPLAY:
 			// Replaying a log, set up replay source
 			setUseTiming(false); // Run as fast as possible
 			final String logPath = LogFileUtil.findReplayLog();
 			Logger.setReplaySource(new WPILOGReader(logPath));
 			Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
-			break;
+				break;
 		}
 		Logger.start();
 

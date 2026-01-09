@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.drive.Drive;
 import frc.robot.drive.DriveCommands;
 import frc.robot.drive.GyroIO;
+import frc.robot.drive.Pigeon2GyroIO;
 import frc.robot.drive.SimModuleIO;
 import frc.robot.drive.TalonFXModuleIO;
 import frc.robot.generated.TunerConstants;
@@ -25,12 +26,13 @@ public class RobotContainer {
 	public RobotContainer() {
 		// Select appropriate IO layers for drive
 		drive = switch(Constants.ROBOT_TYPE) {
-		case SIM -> new Drive(new SimModuleIO(), new SimModuleIO(), new SimModuleIO(), new SimModuleIO(), new GyroIO() {
-		});
-		case PRESEASON_2026 -> new Drive(new TalonFXModuleIO(TunerConstants.FrontLeft),
-				new TalonFXModuleIO(TunerConstants.FrontRight), new TalonFXModuleIO(TunerConstants.BackLeft),
-				new TalonFXModuleIO(TunerConstants.BackRight), new GyroIO() {
-				});
+			case SIM -> new Drive(new SimModuleIO(), new SimModuleIO(), new SimModuleIO(), new SimModuleIO(),
+					new GyroIO() {
+					});
+			case PRESEASON_2026 -> new Drive(new TalonFXModuleIO(TunerConstants.FrontLeft),
+					new TalonFXModuleIO(TunerConstants.FrontRight), new TalonFXModuleIO(TunerConstants.BackLeft),
+					new TalonFXModuleIO(TunerConstants.BackRight), new Pigeon2GyroIO() {
+					});
 		};
 
 		configureBindings();

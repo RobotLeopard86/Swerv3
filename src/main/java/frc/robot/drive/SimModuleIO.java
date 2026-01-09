@@ -2,26 +2,31 @@ package frc.robot.drive;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Constants;
+import frc.robot.Constants.FFwdGains;
 import frc.robot.Constants.PIDGains;
 
 public class SimModuleIO implements ModuleIO {
 
 	// Motors
-	private DCMotor driveMotor = DCMotor.getNEO(1), turnMotor = DCMotor.getNEO(1);
+	private final DCMotor driveMotor = DCMotor.getKrakenX60Foc(1), turnMotor = DCMotor.getKrakenX60Foc(1);
 
 	// Motor simulators
-	private DCMotorSim driveSim, turnSim;
+	private final DCMotorSim driveSim, turnSim;
 
 	// Voltages
-	private double driveVolts = 0.0, driveFeedFwdVolts = 0.0, turnVolts = 0.0;
+	private double driveVolts = 0.0, driveFFwdVolts = 0.0, turnVolts = 0.0;
 
 	// Feedback controllers
-	private PIDController drivePID, turnPID;
+	private final PIDController drivePID, turnPID;
+
+	// Feedforward models
+	private final SimpleMotorFeedforward driveFFwd;
 
 	// Closed-loop control?
 	private boolean driveUseClosedLoop = false, turnUseClosedLoop = false;
@@ -39,6 +44,9 @@ public class SimModuleIO implements ModuleIO {
 		drivePID = new PIDController(0.0, 0.0, 0.0);
 		turnPID = new PIDController(0.0, 0.0, 0.0);
 
+		// Create feedforward model
+		driveFFwd = new SimpleMotorFeedforward(0.0, 0.0, 0.0);
+
 		// Set turn PID to allow continuous motion
 		turnPID.enableContinuousInput(-Math.PI, Math.PI);
 	}
@@ -48,7 +56,7 @@ public class SimModuleIO implements ModuleIO {
 		// Drive motor feedback
 		if(driveUseClosedLoop) {
 			// Update the voltage with the PID controller output
-			driveVolts = driveFeedFwdVolts + drivePID.calculate(driveSim.getAngularVelocityRadPerSec());
+			driveVolts = driveFFwdVolts + drivePID.calculate(driveSim.getAngularVelocityRadPerSec());
 		} else {
 			// Reset the PID controller to make sure it doesn't get outdated
 			drivePID.reset();
@@ -76,11 +84,14 @@ public class SimModuleIO implements ModuleIO {
 		inputs.driveMotorCurrentAmpsSupply = Math.abs(driveSim.getCurrentDrawAmps());
 		inputs.driveMotorPositionRad = driveSim.getAngularPositionRad();
 		inputs.driveMotorVelocityRadPerSec = driveSim.getAngularVelocityRadPerSec();
+		inputs.driveMotorConnected = true;
 		inputs.turnMotorAppliedVolts = turnVolts;
 		inputs.turnMotorCurrentAmpsSupply = Math.abs(turnSim.getCurrentDrawAmps());
 		inputs.turnMotorPosition = Rotation2d.fromRadians(turnSim.getAngularPositionRad());
 		inputs.turnMotorAbsPosition = inputs.turnMotorPosition;
 		inputs.turnMotorVelocityRadPerSec = turnSim.getAngularVelocityRadPerSec();
+		inputs.turnMotorConnected = true;
+		inputs.turnAbsEncoderConnected = true;
 	}
 
 	@Override
@@ -93,16 +104,23 @@ public class SimModuleIO implements ModuleIO {
 	}
 
 	@Override
-	public void setDriveMotorVelocity(double velocityRadPerSec, double feedforwardVoltage) {
+	public void setDriveMotorFFwdGains(FFwdGains gains) {
+		driveFFwd.setKa(gains.kA());
+		driveFFwd.setKs(gains.kS());
+		driveFFwd.setKv(gains.kV());
+	}
+
+	@Override
+	public void setDriveMotorVelocity(double velocityRadPerSec) {
 		// Now using feedback control to set the velocity, not manual voltage control,
 		// so we want closed-loop mode
 		driveUseClosedLoop = true;
 
-		// Set feedforward voltage
-		driveFeedFwdVolts = feedforwardVoltage;
-
 		// Set velocity setpoint
 		drivePID.setSetpoint(velocityRadPerSec);
+
+		// Set feedforward voltage
+		driveFFwdVolts = driveFFwd.calculate(velocityRadPerSec);
 	}
 
 	@Override
@@ -125,13 +143,13 @@ public class SimModuleIO implements ModuleIO {
 	}
 
 	@Override
-	public void setTurnMotorPosition(double position) {
+	public void setTurnMotorPosition(double positionRad) {
 		// Now using feedback control to set the position, not manual voltage control,
 		// so we want closed-loop mode
 		turnUseClosedLoop = true;
 
 		// Set position setpoint
-		turnPID.setSetpoint(position);
+		turnPID.setSetpoint(positionRad);
 	}
 
 	@Override

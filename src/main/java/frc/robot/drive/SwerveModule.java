@@ -2,7 +2,6 @@ package frc.robot.drive;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -19,9 +18,6 @@ public class SwerveModule {
 	// Target state
 	private SwerveModuleState targetState;
 
-	// Feedforward model
-	private SimpleMotorFeedforward feedFwd;
-
 	private String name;
 
 	public SwerveModule(ModuleIO io, Translation2d distanceFromCenter, String name) {
@@ -29,13 +25,11 @@ public class SwerveModule {
 		this.distanceFromCenter = distanceFromCenter;
 		this.io = io;
 
-		// Initialize feedforward model
-		feedFwd = new SimpleMotorFeedforward(Constants.DRIVE_FEEDFWD_GAINS.kS(), Constants.DRIVE_FEEDFWD_GAINS.kV(),
-				Constants.DRIVE_FEEDFWD_GAINS.kA(), Constants.LOOP_PERIOD);
-
-		// Configure PID gains
+		// Configure PID and feedforward gains
 		io.setDriveMotorPIDGains(Constants.DRIVE_PID_GAINS);
 		io.setTurnMotorPIDGains(Constants.TURN_PID_GAINS);
+		io.setDriveMotorFFwdGains(Constants.DRIVE_FEEDFWD_GAINS);
+		io.setTurnMotorFFwdGains(Constants.TURN_FEEDFWD_GAINS);
 
 		// Enable brake by default
 		io.setDriveMotorBrake(true);
@@ -63,8 +57,7 @@ public class SwerveModule {
 		state.cosineScale(inputs.turnMotorAbsPosition);
 
 		// Set motor values
-		io.setDriveMotorVelocity(state.speedMetersPerSecond / Constants.WHEEL_RADIUS,
-				feedFwd.calculate(state.speedMetersPerSecond));
+		io.setDriveMotorVelocity(state.speedMetersPerSecond / Constants.WHEEL_RADIUS);
 		io.setTurnMotorPosition(state.angle.getRadians());
 
 		targetState = state;

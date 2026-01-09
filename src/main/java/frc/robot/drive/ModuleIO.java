@@ -3,6 +3,7 @@ package frc.robot.drive;
 import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.Constants.FFwdGains;
 import frc.robot.Constants.PIDGains;
 
 public interface ModuleIO {
@@ -13,6 +14,7 @@ public interface ModuleIO {
 		public double driveMotorVelocityRadPerSec;
 		public double driveMotorAppliedVolts;
 		public double driveMotorCurrentAmpsSupply;
+		public boolean driveMotorConnected = false;
 
 		// Turn motor data
 		public Rotation2d turnMotorPosition = Rotation2d.kZero;
@@ -20,6 +22,8 @@ public interface ModuleIO {
 		public double turnMotorVelocityRadPerSec;
 		public double turnMotorAppliedVolts;
 		public double turnMotorCurrentAmpsSupply;
+		public boolean turnMotorConnected = false;
+		public boolean turnAbsEncoderConnected = false;
 	}
 
 	// Update loggable inputs from the underlying hardware
@@ -34,8 +38,8 @@ public interface ModuleIO {
 	default void setTurnMotorVoltage(double voltage) {
 	}
 
-	// Set drive motor velocity using the provided feedforward voltage
-	default void setDriveMotorVelocity(double velocityRadPerSec, double feedforwardVoltage) {
+	// Set drive motor velocity
+	default void setDriveMotorVelocity(double velocityRadPerSec) {
 	}
 
 	// Set position of the turn motor
@@ -48,6 +52,14 @@ public interface ModuleIO {
 
 	// Set turn motor PID gains
 	default void setTurnMotorPIDGains(PIDGains gains) {
+	}
+
+	// Set drive motor feedforward gains
+	default void setDriveMotorFFwdGains(FFwdGains gains) {
+	}
+
+	// Set turn motor feedforward gains
+	default void setTurnMotorFFwdGains(FFwdGains gains) {
 	}
 
 	// Enable/disable brake on drive motor

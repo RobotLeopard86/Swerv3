@@ -2,6 +2,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import com.ctre.phoenix6.CANBus;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
@@ -31,9 +33,9 @@ public class Constants {
 	}
 
 	public static final Environment ENV = switch(ROBOT_TYPE) {
-	case SIM -> Environment.SIM;
-	case PRESEASON_2026 -> Environment.REALITY;
-	default -> RobotBase.isReal() ? Environment.REALITY : Environment.REPLAY;
+		case SIM -> Environment.SIM;
+		case PRESEASON_2026 -> Environment.REALITY;
+		default -> RobotBase.isReal() ? Environment.REALITY : Environment.REPLAY;
 	};
 
 	// Command scheduler loop period
@@ -60,18 +62,18 @@ public class Constants {
 	}
 
 	public static final DriveConfig DRIVE_CFG = switch(ROBOT_TYPE) {
-	// These values (for sim bot) were copied from DriveConstants.java in
-	// redshiftrobotics/reefscape-2025
-	case SIM -> new DriveConfig(new Translation2d(0.885, 0.885), new Translation2d(0.9612, 0.9612), 5.05968, 14.5);
+		// These values (for sim bot) were copied from DriveConstants.java in
+		// redshiftrobotics/reefscape-2025
+		case SIM -> new DriveConfig(new Translation2d(0.885, 0.885), new Translation2d(0.9612, 0.9612), 5.05968, 14.5);
 
-	case PRESEASON_2026 -> new DriveConfig(new Translation2d(
-			TunerConstants.FrontLeft.LocationX - TunerConstants.BackRight.LocationX,
-			TunerConstants.FrontLeft.LocationY - TunerConstants.BackRight.LocationY),
-			new Translation2d(
-					TunerConstants.FrontLeft.LocationX - TunerConstants.BackRight.LocationX,
-					TunerConstants.FrontLeft.LocationY - TunerConstants.BackRight.LocationY)
-							.plus(new Translation2d(6.750, 6.750).times(2)),
-			TunerConstants.kSpeedAt12Volts.in(MetersPerSecond), 22.0);
+		case PRESEASON_2026 -> new DriveConfig(new Translation2d(
+				TunerConstants.FrontLeft.LocationX - TunerConstants.BackRight.LocationX,
+				TunerConstants.FrontLeft.LocationY - TunerConstants.BackRight.LocationY),
+				new Translation2d(
+						TunerConstants.FrontLeft.LocationX - TunerConstants.BackRight.LocationX,
+						TunerConstants.FrontLeft.LocationY - TunerConstants.BackRight.LocationY)
+								.plus(new Translation2d(6.750, 6.750).times(2)),
+				TunerConstants.kSpeedAt12Volts.in(MetersPerSecond), 22.0);
 	};
 
 	// Module positions
@@ -91,50 +93,50 @@ public class Constants {
 	}
 
 	public static final SwerveModuleConfig MODULE_FL_CFG = switch(ROBOT_TYPE) {
-	case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
-	// DO NOT RELY ON THIS FOR PRESEASON_2026, USE THE PER-MODULE CONSTANTS VALUES
-	// FROM TunerConstants!!!
-	case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.FrontLeft.DriveMotorId,
-			TunerConstants.FrontLeft.SteerMotorId, TunerConstants.FrontLeft.EncoderId,
-			Rotation2d.fromRotations(TunerConstants.FrontLeft.EncoderOffset),
-			TunerConstants.FrontLeft.SteerMotorInverted);
+		case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
+		// DO NOT RELY ON THIS FOR PRESEASON_2026, USE THE PER-MODULE CONSTANTS VALUES
+		// FROM TunerConstants!!!
+		case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.FrontLeft.DriveMotorId,
+				TunerConstants.FrontLeft.SteerMotorId, TunerConstants.FrontLeft.EncoderId,
+				Rotation2d.fromRotations(TunerConstants.FrontLeft.EncoderOffset),
+				TunerConstants.FrontLeft.SteerMotorInverted);
 	};
 	public static final SwerveModuleConfig MODULE_FR_CFG = switch(ROBOT_TYPE) {
-	case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
-	// DO NOT RELY ON THIS FOR PRESEASON_2026, USE THE PER-MODULE CONSTANTS VALUES
-	// FROM TunerConstants!!!
-	case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.FrontRight.DriveMotorId,
-			TunerConstants.FrontRight.SteerMotorId, TunerConstants.FrontRight.EncoderId,
-			Rotation2d.fromRotations(TunerConstants.FrontRight.EncoderOffset),
-			TunerConstants.FrontRight.SteerMotorInverted);
+		case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
+		// DO NOT RELY ON THIS FOR PRESEASON_2026, USE THE PER-MODULE CONSTANTS VALUES
+		// FROM TunerConstants!!!
+		case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.FrontRight.DriveMotorId,
+				TunerConstants.FrontRight.SteerMotorId, TunerConstants.FrontRight.EncoderId,
+				Rotation2d.fromRotations(TunerConstants.FrontRight.EncoderOffset),
+				TunerConstants.FrontRight.SteerMotorInverted);
 	};
 	public static final SwerveModuleConfig MODULE_BL_CFG = switch(ROBOT_TYPE) {
-	case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
-	// DO NOT RELY ON THIS FOR PRESEASON_2026, USE THE PER-MODULE CONSTANTS VALUES
-	// FROM TunerConstants!!!
-	case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.BackLeft.DriveMotorId,
-			TunerConstants.BackLeft.SteerMotorId, TunerConstants.BackLeft.EncoderId,
-			Rotation2d.fromRotations(TunerConstants.BackLeft.EncoderOffset),
-			TunerConstants.BackLeft.SteerMotorInverted);
+		case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
+		// DO NOT RELY ON THIS FOR PRESEASON_2026, USE THE PER-MODULE CONSTANTS VALUES
+		// FROM TunerConstants!!!
+		case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.BackLeft.DriveMotorId,
+				TunerConstants.BackLeft.SteerMotorId, TunerConstants.BackLeft.EncoderId,
+				Rotation2d.fromRotations(TunerConstants.BackLeft.EncoderOffset),
+				TunerConstants.BackLeft.SteerMotorInverted);
 	};
 	public static final SwerveModuleConfig MODULE_BR_CFG = switch(ROBOT_TYPE) {
-	case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
-	// DO NOT RELY ON THIS FOR PRESEASON_2026, USE THE PER-MODULE CONSTANTS VALUES
-	// FROM TunerConstants!!!
-	case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.BackRight.DriveMotorId,
-			TunerConstants.BackRight.SteerMotorId, TunerConstants.BackRight.EncoderId,
-			Rotation2d.fromRotations(TunerConstants.BackRight.EncoderOffset),
-			TunerConstants.BackRight.SteerMotorInverted);
+		case SIM -> new SwerveModuleConfig(0, 0, 0, Rotation2d.kZero, false);
+		// DO NOT RELY ON THIS FOR PRESEASON_2026, USE THE PER-MODULE CONSTANTS VALUES
+		// FROM TunerConstants!!!
+		case PRESEASON_2026 -> new SwerveModuleConfig(TunerConstants.BackRight.DriveMotorId,
+				TunerConstants.BackRight.SteerMotorId, TunerConstants.BackRight.EncoderId,
+				Rotation2d.fromRotations(TunerConstants.BackRight.EncoderOffset),
+				TunerConstants.BackRight.SteerMotorInverted);
 	};
 
 	// Gyro ID
 	public static final int GYRO_ID = switch(ROBOT_TYPE) {
-	case SIM -> -1;
-	case PRESEASON_2026 -> TunerConstants.DrivetrainConstants.Pigeon2Id;
+		case SIM -> -1;
+		case PRESEASON_2026 -> TunerConstants.DrivetrainConstants.Pigeon2Id;
 	};
 
 	// Controller gains
-	public record FeedforwardGains(double kS, double kV, double kA) {
+	public record FFwdGains(double kS, double kV, double kA) {
 	}
 
 	public record PIDGains(double kP, double kI, double kD) {
@@ -142,17 +144,24 @@ public class Constants {
 
 	// Current gain settings copied from ModuleConstants.java,
 	// redshiftrobotics/reefscape-2025 & redshiftrobotics/preseason-2026
-	public static final FeedforwardGains DRIVE_FEEDFWD_GAINS = switch(ROBOT_TYPE) {
-	case SIM -> new FeedforwardGains(0, 0, 0);
-	case PRESEASON_2026 -> new FeedforwardGains(2.00544, 1.05719, 0);
+	public static final FFwdGains DRIVE_FEEDFWD_GAINS = switch(ROBOT_TYPE) {
+		case SIM -> new FFwdGains(0, 0, 0);
+		case PRESEASON_2026 -> new FFwdGains(2.00544, 1.05719, 0);
 	};
+
 	public static final PIDGains DRIVE_PID_GAINS = switch(ROBOT_TYPE) {
-	case SIM -> new PIDGains(1.3, 0, 0);
-	case PRESEASON_2026 -> new PIDGains(20, 0, 0);
+		case SIM -> new PIDGains(1.3, 0, 0);
+		case PRESEASON_2026 -> new PIDGains(20, 0, 0);
 	};
+
+	public static final FFwdGains TURN_FEEDFWD_GAINS = switch(ROBOT_TYPE) {
+		case SIM -> new FFwdGains(0, 0, 0);
+		case PRESEASON_2026 -> new FFwdGains(0.2, 0, 0);
+	};
+
 	public static final PIDGains TURN_PID_GAINS = switch(ROBOT_TYPE) {
-	case SIM -> new PIDGains(10.0, 0, 0);
-	case PRESEASON_2026 -> new PIDGains(1000, 0, 15);
+		case SIM -> new PIDGains(10.0, 0, 0);
+		case PRESEASON_2026 -> new PIDGains(1400, 0, 15);
 	};
 
 	// Reductions were copied from ModuleConstants.java in
@@ -193,11 +202,26 @@ public class Constants {
 
 	// Reductions
 	public static final double DRIVE_REDUCTION = switch(ROBOT_TYPE) {
-	case SIM -> Mk4iReductions.L3.reduction;
-	case PRESEASON_2026 -> Mk5nReductions.L3.reduction;
+		case SIM -> Mk4iReductions.L3.reduction;
+		case PRESEASON_2026 -> Mk5nReductions.L3.reduction;
 	};
+
 	public static final double TURN_REDUCTION = switch(ROBOT_TYPE) {
-	case SIM -> Mk4iReductions.TURN.reduction;
-	case PRESEASON_2026 -> Mk5nReductions.TURN_REDUCTION;
+		case SIM -> Mk4iReductions.TURN.reduction;
+		case PRESEASON_2026 -> Mk5nReductions.TURN_REDUCTION;
 	};
+
+	// Drive odometry polling frequency
+	public static final double DRIVE_ODOMETRY_FREQUENCY_HZ = switch(ROBOT_TYPE) {
+		case SIM -> 50.0;
+		case PRESEASON_2026 -> (new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0
+				: 100.0);
+		default -> 100.0;
+	};
+
+	// Drivetrain device disconnect warning thresholds
+	// Basically, if the device is still disconnected after this time we know
+	// something is up
+	public static final double DRIVE_MOTOR_DISCONNECT_WARNING_THRESHOLD_SECONDS = 0.5;
+	public static final double DRIVE_ENCODER_DISCONNECT_WARNING_THRESHOLD_SECONDS = 0.2;
 }
