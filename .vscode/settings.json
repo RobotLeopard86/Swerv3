@@ -18,11 +18,9 @@
     {
       "name": "WPIlibUnitTests",
       "workingDirectory": "${workspaceFolder}/build/jni/release",
-      "vmargs": [
-        "-Djava.library.path=${workspaceFolder}/build/jni/release"
-      ],
+      "vmargs": [ "-Djava.library.path=${workspaceFolder}/build/jni/release" ],
       "env": {
-        "LD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release",
+        "LD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release" ,
         "DYLD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release"
       }
     },
@@ -59,8 +57,5 @@
     "edu.wpi.first.math.**.proto.*",
     "edu.wpi.first.math.**.struct.*",
   ],
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "redhat.java",
-  "java.format.settings.url": "https://raw.githubusercontent.com/RobotLeopard86/Swerv3/refs/heads/main/leopardformatter.xml",
-  "java.format.settings.profile": "Leopard Java"
+  "java.dependency.enableDependencyCheckup": false
 }
