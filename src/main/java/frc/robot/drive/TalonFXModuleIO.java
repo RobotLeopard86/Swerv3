@@ -83,7 +83,7 @@ public class TalonFXModuleIO implements ModuleIO {
 		cancoder = new CANcoder(constants.EncoderId, TunerConstants.kCANBus);
 
 		// Setup initial drive configurationr
-		driveMotorConfig = constants.DriveMotorInitialConfigs;
+		driveMotorConfig = constants.DriveMotorInitialConfigs.clone();
 		driveMotorConfig.MotorOutput.NeutralMode = driveBrake ? NeutralModeValue.Brake : NeutralModeValue.Coast; // Brake
 		// mode
 		driveMotorConfig.MotorOutput.Inverted = constants.DriveMotorInverted ? InvertedValue.Clockwise_Positive
@@ -105,7 +105,7 @@ public class TalonFXModuleIO implements ModuleIO {
 		driveMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;// Enable the control above
 
 		// Setup initial turn configuration
-		turnMotorConfig = constants.SteerMotorInitialConfigs;
+		turnMotorConfig = constants.SteerMotorInitialConfigs.clone();
 		turnMotorConfig.MotorOutput.NeutralMode = turnBrake ? NeutralModeValue.Brake : NeutralModeValue.Coast;// Brake
 		// mode
 		turnMotorConfig.MotorOutput.Inverted = constants.SteerMotorInverted ? InvertedValue.Clockwise_Positive
@@ -141,7 +141,7 @@ public class TalonFXModuleIO implements ModuleIO {
 		// modes (V/rps^2)
 
 		// Setup initial CANcoder configuration
-		cancoderConfig = constants.EncoderInitialConfigs;
+		cancoderConfig = constants.EncoderInitialConfigs.clone();
 		cancoderConfig.MagnetSensor.MagnetOffset = constants.EncoderOffset;
 		cancoderConfig.MagnetSensor.SensorDirection = constants.EncoderInverted
 				? SensorDirectionValue.Clockwise_Positive
