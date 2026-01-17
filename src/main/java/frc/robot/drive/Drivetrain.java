@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Drive extends SubsystemBase {
+public class Drivetrain extends SubsystemBase {
 	// Swerve modules
 	private SwerveModule[] modules; // FL, FR, BL, BR order
 
@@ -38,7 +38,7 @@ public class Drive extends SubsystemBase {
 	private SwerveModulePosition[] lastModulePositions;
 	private Rotation2d yaw = Rotation2d.kZero;
 
-	public Drive(ModuleIO fl, ModuleIO fr, ModuleIO bl, ModuleIO br, GyroIO gyro) {
+	public Drivetrain(ModuleIO fl, ModuleIO fr, ModuleIO bl, ModuleIO br, GyroIO gyro) {
 		// Set modules
 		modules = new SwerveModule[] {
 				new SwerveModule(fl, Constants.MODULE_FL_DISTANCE_FROM_CENTER, "FL"),
@@ -101,7 +101,7 @@ public class Drive extends SubsystemBase {
 
 	void setPose(Pose2d pose) {
 		// Reset the pose estimator
-		poseEstimator.resetPosition(gyroInputs.yaw,
+		poseEstimator.resetPosition(yaw,
 				Arrays.stream(modules).map(SwerveModule::getPosition).toArray(SwerveModulePosition[]::new), pose);
 	}
 

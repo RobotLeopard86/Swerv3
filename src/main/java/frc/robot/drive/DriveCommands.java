@@ -8,7 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class DriveCommands {
-	public static Command teleopDrive(Drive drive, Supplier<Translation2d> translation, DoubleSupplier omega) {
+	public static Command teleopDrive(Drivetrain drive, Supplier<Translation2d> translation, DoubleSupplier omega) {
 		return drive.run(() -> {
 			// Create chassis speeds object
 			Translation2d translate = translation.get();

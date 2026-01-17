@@ -7,7 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.drive.Drive;
+import frc.robot.drive.Drivetrain;
 import frc.robot.drive.DriveCommands;
 import frc.robot.drive.GyroIO;
 import frc.robot.drive.Pigeon2GyroIO;
@@ -21,15 +21,15 @@ public class RobotContainer {
 	private JoystickInputHelper joystickHelper;
 
 	// Drive subsystem
-	private Drive drive;
+	private Drivetrain drive;
 
 	public RobotContainer() {
 		// Select appropriate IO layers for drive
 		drive = switch(Constants.ROBOT_TYPE) {
-			case SIM -> new Drive(new SimModuleIO(), new SimModuleIO(), new SimModuleIO(), new SimModuleIO(),
+			case SIM -> new Drivetrain(new SimModuleIO(), new SimModuleIO(), new SimModuleIO(), new SimModuleIO(),
 					new GyroIO() {
 					});
-			case PRESEASON_2026 -> new Drive(new TalonFXModuleIO(TunerConstants.FrontLeft),
+			case PRESEASON_2026 -> new Drivetrain(new TalonFXModuleIO(TunerConstants.FrontLeft),
 					new TalonFXModuleIO(TunerConstants.FrontRight), new TalonFXModuleIO(TunerConstants.BackLeft),
 					new TalonFXModuleIO(TunerConstants.BackRight), new Pigeon2GyroIO() {
 					});

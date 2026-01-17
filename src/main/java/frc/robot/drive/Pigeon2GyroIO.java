@@ -55,7 +55,7 @@ public class Pigeon2GyroIO implements GyroIO {
 		// Set values
 		inputs.connected = connectionDebouncer.calculate(status.isOK());
 		inputs.yaw = Rotation2d.fromDegrees(yaw.getValueAsDouble());
-		inputs.yawVelocityRadPerSec = Units.degreesToRadians(yaw.getValueAsDouble());
+		inputs.yawVelocityRadPerSec = Units.degreesToRadians(yawVelocity.getValueAsDouble());
 	}
 
 	@Override
