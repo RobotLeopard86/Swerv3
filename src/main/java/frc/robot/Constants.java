@@ -214,7 +214,7 @@ public class Constants {
 	// Drive odometry polling frequency
 	public static final double DRIVE_ODOMETRY_FREQUENCY_HZ = switch(ROBOT_TYPE) {
 		case SIM -> 50.0;
-		case PRESEASON_2026 -> (new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0
+		case PRESEASON_2026 -> (TunerConstants.kCANBus.isNetworkFD() ? 250.0
 				: 100.0);
 		default -> 100.0;
 	};

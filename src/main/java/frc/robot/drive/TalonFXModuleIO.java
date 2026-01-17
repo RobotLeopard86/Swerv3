@@ -30,6 +30,7 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 import frc.robot.Constants.FFwdGains;
 import frc.robot.Constants.PIDGains;
+import frc.robot.generated.TunerConstants;
 
 public class TalonFXModuleIO implements ModuleIO {
 	// Module constants
@@ -77,9 +78,9 @@ public class TalonFXModuleIO implements ModuleIO {
 		this.constants = constants;
 
 		// Create motor and encoder objects
-		driveMotor = new TalonFX(constants.DriveMotorId);
-		turnMotor = new TalonFX(constants.SteerMotorId);
-		cancoder = new CANcoder(constants.EncoderId);
+		driveMotor = new TalonFX(constants.DriveMotorId, TunerConstants.kCANBus);
+		turnMotor = new TalonFX(constants.SteerMotorId, TunerConstants.kCANBus);
+		cancoder = new CANcoder(constants.EncoderId, TunerConstants.kCANBus);
 
 		// Setup initial drive configurationr
 		driveMotorConfig = constants.DriveMotorInitialConfigs;
