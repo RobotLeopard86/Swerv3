@@ -79,10 +79,10 @@ public class Constants {
 	// Module positions
 	public static final double CENTER_X = DRIVE_CFG.frameDiagonal.getX() / 2;
 	public static final double CENTER_Y = DRIVE_CFG.frameDiagonal.getY() / 2;
-	public static final Translation2d MODULE_FL_DISTANCE_FROM_CENTER = new Translation2d(-CENTER_X, CENTER_Y);
-	public static final Translation2d MODULE_FR_DISTANCE_FROM_CENTER = new Translation2d(CENTER_X, CENTER_Y);
-	public static final Translation2d MODULE_BL_DISTANCE_FROM_CENTER = new Translation2d(-CENTER_X, -CENTER_Y);
-	public static final Translation2d MODULE_BR_DISTANCE_FROM_CENTER = new Translation2d(CENTER_X, -CENTER_Y);
+	public static final Translation2d MODULE_FL_DISTANCE_FROM_CENTER = new Translation2d(CENTER_X, CENTER_Y);
+	public static final Translation2d MODULE_FR_DISTANCE_FROM_CENTER = new Translation2d(CENTER_X, -CENTER_Y);
+	public static final Translation2d MODULE_BL_DISTANCE_FROM_CENTER = new Translation2d(-CENTER_X, CENTER_Y);
+	public static final Translation2d MODULE_BR_DISTANCE_FROM_CENTER = new Translation2d(-CENTER_X, -CENTER_Y);
 
 	// Wheel radius
 	public static final double WHEEL_RADIUS = Units.inchesToMeters(2);
