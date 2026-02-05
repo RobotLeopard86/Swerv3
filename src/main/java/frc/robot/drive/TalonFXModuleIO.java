@@ -267,9 +267,9 @@ public class TalonFXModuleIO implements ModuleIO {
 	public void setTurnMotorPosition(double positionRad) {
 		turnMotor.setControl(switch(constants.SteerMotorClosedLoopOutput) {
 			case Voltage -> positionVoltageRequest
-					.withVelocity(Units.radiansToRotations(positionRad));
+					.withPosition(Units.radiansToRotations(positionRad));
 			case TorqueCurrentFOC -> positionTorqueCurrentFOCRequest
-					.withVelocity(Units.radiansToRotations(positionRad));
+					.withPosition(Units.radiansToRotations(positionRad));
 		});
 	}
 

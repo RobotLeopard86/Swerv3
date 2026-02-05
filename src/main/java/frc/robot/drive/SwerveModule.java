@@ -53,8 +53,8 @@ public class SwerveModule {
 
 	public void setTargetState(SwerveModuleState state) {
 		// Optimize state to avoid wild spinning
-		state.optimize(inputs.turnMotorAbsPosition);
-		state.cosineScale(inputs.turnMotorAbsPosition);
+		//state.optimize(inputs.turnMotorAbsPosition);
+		//state.cosineScale(inputs.turnMotorAbsPosition);
 
 		// Set motor values
 		io.setDriveMotorVelocity(state.speedMetersPerSecond / Constants.WHEEL_RADIUS);
